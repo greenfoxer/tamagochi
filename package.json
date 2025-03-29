@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "lt": "lt --port 5173 --subdomain roman-tamagochi-test",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
