@@ -1,42 +1,57 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+body {
+  background-color: #DCA876;
+  font-family: 'Arial', sans-serif;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+.app {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+.tamagotchi-container {
+  position: relative;
+  width: 100%;
+  max-width: 390px;
+  height: 100vh;
+  max-height: 844px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.top-panel-wrapper {
+  position: absolute;
+  top: 30px;
+  width: 90%;
+  z-index: 3;
+}
+
+.action-buttons-wrapper {
+  position: absolute;
+  bottom: 65px;
+  width: 95%;
+  z-index: 3;
+}
+
+@media (max-height: 700px) {
+  .action-buttons-wrapper {
+    bottom: 45px;
   }
-  to {
-    transform: rotate(360deg);
+}
+
+@media (max-width: 375px) {
+  .action-buttons-wrapper {
+    width: 100%;
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
