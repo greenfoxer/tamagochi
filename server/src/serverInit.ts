@@ -1,9 +1,7 @@
-import dotenv from 'dotenv';
 import Hapi from '@hapi/hapi';
 import TelegramBot from 'node-telegram-bot-api';
 import { PrismaClient } from '@prisma/client';
 
-dotenv.config();
 const prisma = new PrismaClient();
 
 // Проверка наличия токена

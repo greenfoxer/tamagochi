@@ -15,7 +15,7 @@ function App() {
     if(!user) return;
     const fetchUser = async () => {
       try{
-        const response = await fetch('http://localhost:3000/login',{
+        const response = await fetch('https://roman-tamagochi-server-test.loca.lt/login',{
           method: 'POST',
           headers: {
             'Content-Type' : 'application/json'

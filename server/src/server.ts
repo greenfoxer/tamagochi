@@ -1,4 +1,7 @@
 import { createServer } from "./serverInit.js";
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const init = async () => {
   const server = await createServer();
