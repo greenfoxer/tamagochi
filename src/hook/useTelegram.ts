@@ -19,8 +19,12 @@ export const useTelegram = () => {
             } else {
                 setUser({
                     id:12345,
+                    username: 'testuser',
                     first_name: 'Test',
-                    username: 'testuser'
+                    last_name: "testov",
+                    photo_url: "",
+                    language_code: "ru",
+                    is_premium: true,
                 });
                 setIsTelegram(false);
             }

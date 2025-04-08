@@ -12,8 +12,8 @@ export const useTelegramBackButton=() =>{
         }
     }
     useEffect(() =>{
-        if(!webApp)
-            return;
+        if(!webApp) return;
+        
         if(location.pathname !== '/'){
             webApp.BackButton.show();
             webApp.onEvent('backButtonClicked', handleBackButton);
