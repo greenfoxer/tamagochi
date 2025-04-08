@@ -1,4 +1,5 @@
 export interface TelegramUser{
+    telegramId: number,
     id: number,
     username: string,
     first_name: string,

@@ -19,7 +19,7 @@ export function useAuth() {
             setUser(response.user);
 
             if(response.user && response.user.telegramId){
-                localStorage.setItem('telegramId', response.user.telegramId);
+                localStorage.setItem('telegramId', response.user.telegramId.toString());
             }
             setError(null);
         } catch (error) {

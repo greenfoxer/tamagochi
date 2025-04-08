@@ -1,12 +1,13 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
 export interface User {
-    id: string;
-    telegramId: string;
-    username: string;
-    firstname: string;
-    coins: number;
-    isPremium: boolean;
+    telegramId: number,
+    username: string,
+    first_name: string,
+    last_name?: string,
+    photo_url?: string,
+    language_code?: string,
+    is_premium?: boolean,
 }
 
 export interface Pet {
