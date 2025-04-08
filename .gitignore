@@ -19,3 +19,4 @@ TODOs.md
 */prisma/*.db
 *.env
 */.env
+*/*.db-journal

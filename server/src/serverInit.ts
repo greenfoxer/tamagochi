@@ -1,8 +1,11 @@
 import Hapi from '@hapi/hapi';
-import TelegramBot from 'node-telegram-bot-api';
-import { PrismaClient } from '@prisma/client';
+import TelegramBot, { Update } from 'node-telegram-bot-api';
+import { Pet, User } from '@prisma/client';
+import { Repository } from './repository.js';
+import { checkLevelUp, feedPet } from './business.js';
+import { addBusinessRoutesTo } from './registerServerRoutes.js';
 
-const prisma = new PrismaClient();
+const repository = new Repository();
 
 // Проверка наличия токена
 if (!process.env.TELEGRAM_BOT_TOKEN) {
@@ -10,8 +13,10 @@ if (!process.env.TELEGRAM_BOT_TOKEN) {
   process.exit(1);
 }
 
+const WEBHOOK_URL = `${process.env.WEBHOOK_URL}/webhook`;
+
 // Инициализация Telegram бота в режиме long polling
-const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: true });
+const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { webHook: true });
 
 // Обработчик сообщений
 bot.on('message', async (msg) => {
@@ -35,16 +40,21 @@ bot.onText(/\/start/, async (msg) =>{
     }
   });
 });
-
-// Запуск сервера
-// const init = async () => {
-//   try {
-
-//   } catch (err) {
-//     console.error('Ошибка при запуске/работе сервера:', err);
-//     process.exit(1);
-//   }
-// };
+async function ensureWebhook(){
+    try {
+        const response = await fetch(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/getWebhookInfo`);
+        const data  = await response.json();
+        console.log(WEBHOOK_URL, data);
+        if(data.result.url !== WEBHOOK_URL){
+            console.log("Webhook не установлен. Попытка еще..");
+            await bot.setWebHook(WEBHOOK_URL);
+        } else {
+            console.log(`Webhook уже установлен по адресу ${data.result.url}`);
+        }
+    } catch (error) {
+        console.error("Ошибка установки webhook");
+    }
+}
 export const createServer = async () =>{
     // Создание Hapi сервера
     const server = Hapi.server({
@@ -59,98 +69,7 @@ export const createServer = async () =>{
             additionalHeaders: ['telegram-data']
         }
         }
-    });
-
-    // Базовый маршрут
-    server.route({
-        method: 'GET',
-        path: '/',
-        handler: (request, h) => {
-        return '<h1>Добро пожаловать на наш сервер!</h1>';
-        }
-    });
-    
-    // Healthcheck
-    server.route({
-        method: 'GET',
-        path: '/health',
-        handler: (request, h) => {
-        return { 
-            status: 'ok',
-            message: 'Сервер работает корректно '
-        };
-        }
-    });
-    
-    server.route({
-        method: 'POST',
-        path: '/login',
-        handler: async (request, h) => {
-        // @ts-ignore
-        const { user } = request.payload;
-        console.log(user);
-        const userData = await prisma.user.upsert({
-            where:{
-            telegram_id: user.id.toString(),
-            },
-            update: {
-            last_active: new Date(),
-            username: user.username,
-            first_name: user.first_name,
-            last_name: user.last_name,
-            photo_url: user.photo_url,
-            language: user.language || 'ru',
-            is_premium: user.is_premium
-            },
-            create: {
-            telegram_id: user.id.toString(),
-            username: user.username,
-            first_name: user.first_name,
-            last_name: user.last_name,
-            photo_url: user.photo_url,
-            language: user.language || 'ru',
-            is_premium: user.is_premium
-            }
-        })
-        console.log(userData);
-        return userData;
-        }
-    });
-    
-    server.route({
-        method: 'GET',
-        path: '/api/pets/my',
-        handler: async (request, h) => {
-        // @ts-ignore
-        const { user } = request.payload;
-        console.log(user);
-        const userData = await prisma.user.upsert({
-            where:{
-            telegram_id: user.id.toString(),
-            },
-            update: {
-            last_active: new Date(),
-            username: user.username,
-            first_name: user.first_name,
-            last_name: user.last_name,
-            photo_url: user.photo_url,
-            language: user.language || 'ru',
-            is_premium: user.is_premium
-            },
-            create: {
-            telegram_id: user.id.toString(),
-            username: user.username,
-            first_name: user.first_name,
-            last_name: user.last_name,
-            photo_url: user.photo_url,
-            language: user.language || 'ru',
-            is_premium: user.is_premium
-            }
-        })
-        console.log(userData);
-        return userData;
-        }
-    });
+    });    
     
     server.route({
         method: 'GET',
@@ -163,7 +82,35 @@ export const createServer = async () =>{
             message: 'Message sent!'
         }
         }
-    })
+    });
+    // Healthcheck
+    server.route({
+        method: 'GET',
+        path: '/health',
+        handler: async (request, h) => {
+          await bot.sendMessage(236816352,'Сервер работает корректно!');
+          return { 
+            status: 'ok',
+            message: 'Сервер работает корректно '
+        };
+        }
+    });
+  
+    server.route({
+        method: 'POST',
+        path: '/webhook',
+        handler: async (request, h) => {
+            const data = request.payload;
+            console.log("Получены данные: ", data);
+            await bot.processUpdate(request.payload as Update);
+            return h.response({success: true}).code(200);
+        }
+    });
+
+    addBusinessRoutesTo(server);
+    
     await server.initialize();
+
+    await ensureWebhook();
     return server;
 }
