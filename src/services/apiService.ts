@@ -2,6 +2,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 export interface User {
     telegramId: number,
+    id: string,
     username: string,
     first_name: string,
     last_name?: string,
