@@ -67,7 +67,7 @@ class ApiService{
         return this.request<{success: boolean, user: User}>(`/api/user?telegramId=${telegramId}`);
     }
     async getPet(userId : string){
-        return this.request<{success: boolean, user: User}>(`/api/pets/my?userId=${userId}`);
+        return this.request<{success: boolean, pets: Pet}>(`/api/pets/my?userId=${userId}`);
     }
     async feedPet(petId : string){
         return this.request<{success: boolean, message: string, pets: Partial<Pet>}>('/api/pets/feed',{

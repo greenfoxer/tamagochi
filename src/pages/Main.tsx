@@ -10,9 +10,13 @@ import petLevel1Image from '../assets/images/pets/pet-level1.png';
 import petLevel2Image from '../assets/images/pets/pet-level2.png';
 import petLevel3Image from '../assets/images/pets/pet-level3.png';
 import petLevel4Image from '../assets/images/pets/pet-level4.png';
+import usePet from '../hook/usePet';
 
 
 function Main() {
+  const [pet, updatePet] = usePet();
+  if(!pet)
+    return(<h1>LOADING PET</h1>);
   // Загружаем данные из localStorage при старте приложения
   const loadPetState = () => {
     try {
@@ -48,12 +52,12 @@ function Main() {
   // Инициализируем состояние из localStorage
   const initialState = loadPetState();
   
-  const [level, setLevel] = useState<number>(initialState.level);
-  const [hunger, setHunger] = useState<number>(initialState.hunger);
-  const [happiness, setHappiness] = useState<number>(initialState.happiness);
-  const [energy, setEnergy] = useState<number>(initialState.energy);
-  const [knowledge, setKnowledge] = useState<number>(initialState.knowledge);
-  const [health, setHealth] = useState<number>(initialState.health);
+  const [level, setLevel] = useState<number>(pet.level);
+  const [hunger, setHunger] = useState<number>(pet.hunger);
+  const [happiness, setHappiness] = useState<number>(pet.happiness);
+  const [energy, setEnergy] = useState<number>(pet.energy);
+  const [knowledge, setKnowledge] = useState<number>(pet.knowledge);
+  const [health, setHealth] = useState<number>(pet.health);
   
   // Сохраняем данные в localStorage при изменении состояния
   useEffect(() => {
@@ -76,14 +80,15 @@ function Main() {
   // Периодическое снижение показателей
   useEffect(() => {
     const interval = setInterval(() => {
-      setHunger((prev: number) => Math.max(0, prev - 2));
-      setHappiness((prev: number) => Math.max(0, prev - 1));
-      setEnergy((prev: number) => Math.max(0, prev - 1.5));
-      setKnowledge((prev: number) => Math.max(0, prev - 0.5));
+      //updatePet();
+      // setHunger((prev: number) => Math.max(0, prev - 2));
+      // setHappiness((prev: number) => Math.max(0, prev - 1));
+      // setEnergy((prev: number) => Math.max(0, prev - 1.5));
+      // setKnowledge((prev: number) => Math.max(0, prev - 0.5));
       
-      // Здоровье зависит от других параметров
-      const averageStats = (hunger + happiness + energy) / 3;
-      setHealth(Math.min(100, averageStats));
+      // // Здоровье зависит от других параметров
+      // const averageStats = (hunger + happiness + energy) / 3;
+      // setHealth(Math.min(100, averageStats));
     }, 5000);
     
     return () => clearInterval(interval);

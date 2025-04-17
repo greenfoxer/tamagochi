@@ -12,7 +12,8 @@ export function useAuth() {
         try {
             setLoading(true);
             console.log('tgUser: ',tgUser);
-            
+            if(!tgUser)
+                return;
             const response = await api.login(tgUser as WebAppUser);
             console.log('userresponse:',response);
             
@@ -34,5 +35,5 @@ export function useAuth() {
             
             login();
     }, [tgUser]);
-    return {user, loading, error}
+    return [user, loading, error]
  }
